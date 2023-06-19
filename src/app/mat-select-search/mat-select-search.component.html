@@ -1,8 +1,8 @@
 <mat-form-field class="select-search" appearance="outline">
+  <mat-label>{{placeholder}}</mat-label>
   <input
     #input
     matInput
-    placeholder="Search"
     type="text"
     [formControl]="filter"
     (keydown.enter)="selectFirstOption()"

@@ -2,7 +2,7 @@ import { Component, ElementRef, Host, Input, OnChanges, OnInit, Optional, ViewCh
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { BehaviorSubject, debounceTime, filter } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter } from 'rxjs';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 
@@ -22,14 +22,12 @@ import { MatSelect } from '@angular/material/select';
 export class MatSelectSearchComponent implements OnInit, OnChanges {
 
   @ViewChild('input')
-  protected input?: ElementRef<HTMLInputElement>;
+  input?: ElementRef<HTMLInputElement>;
 
   @Input()
-  items: string[] = [];
+  placeholder = 'Search'
 
-  protected filter = new FormControl('');
-
-  options$ = new BehaviorSubject<string[]>([...this.items]);
+  filter = new FormControl('');
 
   constructor(
     @Optional() @Host() private select: MatSelect
@@ -48,8 +46,10 @@ export class MatSelectSearchComponent implements OnInit, OnChanges {
 
   private onFilterChange() {
     this.filter.valueChanges
-      .pipe(debounceTime(200))
-      .subscribe(filter => this.filterItems(filter));
+      .pipe(
+        distinctUntilChanged(),
+        debounceTime(200)
+      ).subscribe(filter => this.filterItems(filter));
   }
 
   private onSelectOpened() {
@@ -59,16 +59,35 @@ export class MatSelectSearchComponent implements OnInit, OnChanges {
   }
 
   private onSelected() {
-    this.select.valueChange.subscribe(() => this.reset());
+    this.select.valueChange
+      .pipe(filter(() => !this.select.multiple))
+      .subscribe(() => this.reset());
   }
 
   private filterItems(filter = this.filter.value) {
     if (filter) {
-      const filteredItems = this.items.filter(i => i.includes(filter));
-      this.options$.next(filteredItems);
+      this.select.options.forEach(opt => {
+        const el = opt._getHostElement();
+        if (el) {
+          if (!opt.viewValue.includes(filter)) {
+            el.style.display = 'none';
+          } else {
+            el.style.display = 'flex';
+          }
+        }
+      })
     } else {
-      this.options$.next([...this.items]);
+      this.showAllOptions();
     }
+  }
+
+  private showAllOptions() {
+    this.select.options.forEach(opt => {
+      const el = opt._getHostElement();
+      if (el) {
+        el.style.display = 'flex';
+      }
+    })
   }
 
   selectFirstOption() {

@@ -2,17 +2,11 @@
   <mat-form-field>
     <mat-label>Filtered items</mat-label>
     <mat-select multiple placeholder="Filtered items">
-      <mat-select-search #input="matSelectSearch" [items]="items" />
+      <mat-select-search />
 
-      <ng-container *ngIf="input.options$ | async as options">
-        <button mat-button *ngIf="!options.length" disabled>
-          Ничего не найдено
-        </button>
-
-        <mat-option *ngFor="let item of options" [value]="item">
-          {{ item }}
-        </mat-option>
-      </ng-container>
+      <mat-option *ngFor="let item of items" [value]="item">
+        {{ item }} + 123
+      </mat-option>
     </mat-select>
   </mat-form-field>
 </main>
