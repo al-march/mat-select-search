@@ -6,6 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { MatSelectSearchComponent } from "./mat-select-search/mat-select-search.component";
 
@@ -22,7 +23,8 @@ import { MatSelectSearchComponent } from "./mat-select-search/mat-select-search.
         MatFormFieldModule,
         MatSelectModule,
         MatInputModule,
-        MatSelectSearchComponent
+        MatSelectSearchComponent,
+        MatButtonModule
     ]
 })
 export class AppModule {}

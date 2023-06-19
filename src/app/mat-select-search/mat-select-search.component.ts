@@ -1,4 +1,4 @@
-import { Component, ElementRef, Host, Input, OnChanges, OnInit, Optional, SimpleChanges, ViewChild, ViewRef } from '@angular/core';
+import { Component, ElementRef, Host, Input, OnChanges, OnInit, Optional, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -66,8 +66,6 @@ export class MatSelectSearchComponent implements OnInit, OnChanges {
     if (filter) {
       const filteredItems = this.items.filter(i => i.includes(filter));
       this.options$.next(filteredItems);
-      console.log(this.select);
-
     } else {
       this.options$.next([...this.items]);
     }

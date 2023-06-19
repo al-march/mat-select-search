@@ -1,12 +1,13 @@
 <main class="app">
   <mat-form-field>
     <mat-label>Filtered items</mat-label>
-    <mat-select placeholder="Filtered items">
+    <mat-select multiple placeholder="Filtered items">
       <mat-select-search #input="matSelectSearch" [items]="items" />
+
       <ng-container *ngIf="input.options$ | async as options">
-        <mat-option *ngIf="!options.length" disabled>
+        <button mat-button *ngIf="!options.length" disabled>
           Ничего не найдено
-        </mat-option>
+        </button>
 
         <mat-option *ngFor="let item of options" [value]="item">
           {{ item }}
