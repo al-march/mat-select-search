@@ -6,5 +6,12 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'mat-search-select';
+
+  items = ['one', 'two', 'three', 'four'];
+  filteredItems = [...this.items];
+
+  filter(value: string) {
+    const v = value.trim().toLowerCase();
+    this.filteredItems = this.items.filter(item => item.includes(v));
+  }
 }

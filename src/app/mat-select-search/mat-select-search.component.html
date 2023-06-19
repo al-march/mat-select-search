@@ -1,0 +1,10 @@
+<mat-form-field class="select-search" appearance="outline">
+  <input
+    #input
+    matInput
+    placeholder="Search"
+    type="text"
+    [formControl]="filter"
+    (keydown.enter)="selectFirstOption()"
+  />
+</mat-form-field>
