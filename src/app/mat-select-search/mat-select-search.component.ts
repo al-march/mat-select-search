@@ -5,6 +5,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, filter } from 'rxjs';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'mat-select-search',
@@ -14,7 +15,8 @@ import { MatSelect } from '@angular/material/select';
     CommonModule,
     MatFormFieldModule,
     MatInputModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatIconModule
   ],
   templateUrl: './mat-select-search.component.html',
   styleUrls: ['./mat-select-search.component.scss']
@@ -54,8 +56,7 @@ export class MatSelectSearchComponent implements OnInit, OnChanges {
 
   private onSelectOpened() {
     this.select.openedChange
-      .pipe(filter(Boolean))
-      .subscribe(() => this.focus());
+      .subscribe((opened) => opened ? this.focus() : this.reset());
   }
 
   private onSelected() {
