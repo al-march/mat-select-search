@@ -171,6 +171,12 @@ export class MatSelectSearchComponent implements OnInit, OnChanges {
     this.input?.nativeElement.focus();
   }
 
+  refocus() {
+    setTimeout(() => {
+      this.focus();
+    })
+  }
+
   reset() {
     this.filter.reset();
   }

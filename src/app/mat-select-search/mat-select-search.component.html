@@ -8,6 +8,8 @@
     #input
     matInput
     type="text"
+    (keydown.space)="refocus()"
+    (keydown.enter)="refocus()"
     [formControl]="filter"
   />
 
