@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Host, Inject, InjectionToken, Input, OnChanges, OnInit, Optional, Output, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Host, Inject, InjectionToken, Input, OnChanges, OnInit, Optional, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -46,7 +46,8 @@ function setConfigValue(config: MatSelectSearchConfig, key: keyof MatSelectSearc
     MatIconModule
   ],
   templateUrl: './mat-select-search.component.html',
-  styleUrls: ['./mat-select-search.component.scss']
+  styleUrls: ['./mat-select-search.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MatSelectSearchComponent implements OnInit, OnChanges {
 
@@ -70,7 +71,8 @@ export class MatSelectSearchComponent implements OnInit, OnChanges {
 
   constructor(
     @Optional() @Host() private select: MatSelect,
-    @Optional() @Inject(MAT_SELECT_SEARCH) private config: MatSelectSearchConfig
+    @Optional() @Inject(MAT_SELECT_SEARCH) private config: MatSelectSearchConfig,
+    private ref: ChangeDetectorRef
   ) {
   }
 
@@ -78,6 +80,21 @@ export class MatSelectSearchComponent implements OnInit, OnChanges {
     this.onFilterChange();
     this.onSelectOpened();
     this.onSelected();
+
+    setTimeout(() => {
+      this.select._keyManager.skipPredicate((option) => {
+        console.log(option);
+
+        return !this.isOptionActive(option);
+      })
+      this.select._keyManager.change.subscribe(() => {
+        const activeOption = this.select._keyManager.activeItem;
+        if (activeOption instanceof MatOption) {
+          const el = activeOption._getHostElement();
+          el.scrollIntoView({ block: 'end' })
+        }
+      })
+    })
   }
 
   ngOnChanges(): void {
@@ -91,20 +108,25 @@ export class MatSelectSearchComponent implements OnInit, OnChanges {
         debounceTime(100)
       ).subscribe((filter) => {
         this.filterItems(filter);
+        this.focusFirstOption();
         this.updateIsNothingFoundState();
         this.filterChange.emit(filter);
+        this.ref.detectChanges();
       });
   }
 
   private onSelectOpened() {
-    this.select.openedChange
-      .subscribe((opened) => opened ? this.focus() : this.reset());
+    this.select.openedChange.subscribe((opened) => {
+      if (opened) {
+        this.focus();
+      }
+    });
   }
 
   private onSelected() {
     this.select.valueChange
       .pipe(filter(() => !this.select.multiple))
-      .subscribe(() => this.reset());
+    // .subscribe(() => this.reset());
   }
 
   private filterItems(filter = this.filter.value) {
@@ -133,13 +155,15 @@ export class MatSelectSearchComponent implements OnInit, OnChanges {
     })
   }
 
-  selectFirstOption() {
-    const first = this.select.options.find(opt => this.isOptionActive(opt));
-    if (first instanceof MatOption) {
-      first.select();
-      if (!this.select.multiple) {
-        this.select.close();
+  private focusFirstOption() {
+    const option = this.select.options.find((opt) => {
+      if (this.isOptionActive(opt)) {
+        return true;
       }
+      return false;
+    });
+    if (option instanceof MatOption) {
+      this.select._keyManager.setActiveItem(option);
     }
   }
 
@@ -154,7 +178,7 @@ export class MatSelectSearchComponent implements OnInit, OnChanges {
   private isOptionActive(option: MatOption) {
     const el = option._getHostElement();
     if (el instanceof HTMLElement) {
-      return el.style.display === 'flex';
+      return el.style.display !== 'none';
     }
     return false;
   }

@@ -9,8 +9,6 @@
     matInput
     type="text"
     [formControl]="filter"
-    (keydown.enter)="$event.stopPropagation(); selectFirstOption()"
-    (keydown.space)="$event.stopPropagation();"
   />
 
   <button

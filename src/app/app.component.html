@@ -1,19 +1,19 @@
 <main class="app">
   <mat-form-field>
-    <mat-label>Filtered items</mat-label>
-    <mat-select multiple placeholder="Filtered items">
-      <mat-select-search placeholder="hahaha" />
+    <mat-label>Filtered items single</mat-label>
+    <mat-select placeholder="Filtered items">
+      <mat-select-search />
 
       <mat-option *ngFor="let item of items" [value]="item">
         {{ item }}
       </mat-option>
     </mat-select>
   </mat-form-field>
-
+  
   <mat-form-field>
-    <mat-label>Filtered items single</mat-label>
-    <mat-select placeholder="Filtered items">
-      <mat-select-search />
+    <mat-label>Filtered items</mat-label>
+    <mat-select multiple placeholder="Filtered items">
+      <mat-select-search placeholder="hahaha" />
 
       <mat-option *ngFor="let item of items" [value]="item">
         {{ item }}
