@@ -4,6 +4,7 @@
 
   <button
     *ngIf="!!filter.value"
+    type="button"
     matSuffix
     mat-icon-button
     aria-label="Clear"
@@ -13,7 +14,7 @@
   </button>
 </mat-form-field>
 
-<div class="not-found" *ngIf="isNothingFound">
+<div class="select-search-not-found mat-mdc-option" *ngIf="isNothingFound">
   <button type="button" mat-button disabled>
     {{ notFoundLabel }}
   </button>
