@@ -1,12 +1,6 @@
 <mat-form-field class="select-search" appearance="outline">
   <mat-label>{{ placeholder }}</mat-label>
-  <input
-    #input
-    matInput
-    type="text"
-    [formControl]="filter"
-    (keydown.enter)="selectFirstOption()"
-  />
+  <input #input matInput type="text" [formControl]="filter" />
 
   <button
     *ngIf="!!filter.value"
@@ -18,3 +12,9 @@
     <mat-icon>close</mat-icon>
   </button>
 </mat-form-field>
+
+<div class="not-found" *ngIf="isNothingFound">
+  <button type="button" mat-button disabled>
+    {{ notFoundLabel }}
+  </button>
+</div>

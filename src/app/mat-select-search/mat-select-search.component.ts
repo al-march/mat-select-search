@@ -1,4 +1,4 @@
-import { Component, ElementRef, Host, Input, OnChanges, OnInit, Optional, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Host, Inject, InjectionToken, Input, OnChanges, OnInit, Optional, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -6,6 +6,20 @@ import { debounceTime, distinctUntilChanged, filter } from 'rxjs';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOption } from '@angular/material/core';
+
+export type MatSelectSearchConfig = {
+  placeholder?: string;
+  notFoundLabel?: string;
+}
+
+export const MAT_SELECT_SEARCH = new InjectionToken<MatSelectSearchConfig>('mat-select-search-token');
+
+const defaultConfig: MatSelectSearchConfig = {
+  placeholder: 'Search',
+  notFoundLabel: 'Nothing is found'
+}
 
 @Component({
   selector: 'mat-select-search',
@@ -13,27 +27,38 @@ import { MatIconModule } from '@angular/material/icon';
   standalone: true,
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    ReactiveFormsModule,
+    MatButtonModule,
     MatIconModule
   ],
   templateUrl: './mat-select-search.component.html',
   styleUrls: ['./mat-select-search.component.scss']
 })
 export class MatSelectSearchComponent implements OnInit, OnChanges {
+  private config: MatSelectSearchConfig = defaultConfig;
 
   @ViewChild('input')
   input?: ElementRef<HTMLInputElement>;
 
   @Input()
-  placeholder = 'Search'
+  placeholder = this.config.placeholder;
+
+  @Input()
+  notFoundLabel = this.config.notFoundLabel;
+
+  @Output()
+  filterChange = new EventEmitter<string | null>();
 
   filter = new FormControl('');
+  isNothingFound = false;
 
   constructor(
-    @Optional() @Host() private select: MatSelect
+    @Optional() @Host() private select: MatSelect,
+    @Optional() @Inject(MAT_SELECT_SEARCH) config: MatSelectSearchConfig
   ) {
+    this.config = { ...defaultConfig, ...config };
   }
 
   ngOnInit(): void {
@@ -50,8 +75,12 @@ export class MatSelectSearchComponent implements OnInit, OnChanges {
     this.filter.valueChanges
       .pipe(
         distinctUntilChanged(),
-        debounceTime(200)
-      ).subscribe(filter => this.filterItems(filter));
+        debounceTime(100)
+      ).subscribe((filter) => {
+        this.filterItems(filter);
+        this.updateIsNothingFoundState();
+        this.filterChange.emit(filter);
+      });
   }
 
   private onSelectOpened() {
@@ -92,7 +121,10 @@ export class MatSelectSearchComponent implements OnInit, OnChanges {
   }
 
   selectFirstOption() {
-    this.select.options.first.select();
+    const first = this.select.options.find(opt => this.isOptionActive(opt));
+    if (first instanceof MatOption) {
+      first.select();
+    }
   }
 
   focus() {
@@ -101,5 +133,26 @@ export class MatSelectSearchComponent implements OnInit, OnChanges {
 
   reset() {
     this.filter.reset();
+  }
+
+  private isOptionActive(option: MatOption) {
+    const el = option._getHostElement();
+    if (el instanceof HTMLElement) {
+      return el.style.display === 'flex';
+    }
+    return false;
+  }
+
+  private updateIsNothingFoundState() {
+    this.isNothingFound = this.checkIsNothingFound();
+  }
+
+  private checkIsNothingFound() {
+    for (let opt of this.select.options) {
+      if (this.isOptionActive(opt)) {
+        return false;
+      }
+    }
+    return true;
   }
 }
