@@ -1,4 +1,8 @@
-<mat-form-field class="select-search" appearance="outline">
+<mat-form-field
+  class="select-search mat-app-background"
+  [class.sticky]="sticky"
+  appearance="outline"
+>
   <mat-label>{{ placeholder }}</mat-label>
   <input #input matInput type="text" [formControl]="filter" />
 

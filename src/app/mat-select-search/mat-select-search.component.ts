@@ -12,13 +12,15 @@ import { MatOption } from '@angular/material/core';
 export type MatSelectSearchConfig = {
   placeholder?: string;
   notFoundLabel?: string;
+  sticky?: boolean;
 }
 
 export const MAT_SELECT_SEARCH = new InjectionToken<MatSelectSearchConfig>('mat-select-search-token');
 
 const defaultConfig: MatSelectSearchConfig = {
   placeholder: 'Search',
-  notFoundLabel: 'Nothing is found'
+  notFoundLabel: 'Nothing is found',
+  sticky: true,
 }
 
 @Component({
@@ -47,6 +49,9 @@ export class MatSelectSearchComponent implements OnInit, OnChanges {
 
   @Input()
   notFoundLabel = this.config.notFoundLabel;
+
+  @Input()
+  sticky = this.config.sticky;
 
   @Output()
   filterChange = new EventEmitter<string | null>();

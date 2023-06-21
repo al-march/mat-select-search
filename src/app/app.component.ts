@@ -7,7 +7,7 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
 
-  items = ['one', 'two', 'three', 'four'];
+  items = ['one', 'two', 'three', 'four', 'five', 'six', 'seven'];
   filteredItems = [...this.items];
 
   filter(value: string) {
