@@ -15,12 +15,22 @@ export type MatSelectSearchConfig = {
   sticky?: boolean;
 }
 
-export const MAT_SELECT_SEARCH = new InjectionToken<MatSelectSearchConfig>('mat-select-search-token');
-
 const defaultConfig: MatSelectSearchConfig = {
   placeholder: 'Search',
   notFoundLabel: 'Nothing is found',
   sticky: true,
+}
+
+export const MAT_SELECT_SEARCH = new InjectionToken<MatSelectSearchConfig>(
+  'mat-select-search-token'
+);
+
+function setConfigValue(config: MatSelectSearchConfig, key: keyof MatSelectSearchConfig) {
+  if (key in config) {
+    return config[key];
+  } else {
+    return defaultConfig[key];
+  }
 }
 
 @Component({
@@ -39,19 +49,18 @@ const defaultConfig: MatSelectSearchConfig = {
   styleUrls: ['./mat-select-search.component.scss']
 })
 export class MatSelectSearchComponent implements OnInit, OnChanges {
-  private config: MatSelectSearchConfig = defaultConfig;
 
   @ViewChild('input')
   input?: ElementRef<HTMLInputElement>;
 
   @Input()
-  placeholder = this.config.placeholder;
+  placeholder = setConfigValue(this.config, 'placeholder');
 
   @Input()
-  notFoundLabel = this.config.notFoundLabel;
+  notFoundLabel = setConfigValue(this.config, 'notFoundLabel');
 
   @Input()
-  sticky = this.config.sticky;
+  sticky = setConfigValue(this.config, 'sticky');
 
   @Output()
   filterChange = new EventEmitter<string | null>();
@@ -61,9 +70,8 @@ export class MatSelectSearchComponent implements OnInit, OnChanges {
 
   constructor(
     @Optional() @Host() private select: MatSelect,
-    @Optional() @Inject(MAT_SELECT_SEARCH) config: MatSelectSearchConfig
+    @Optional() @Inject(MAT_SELECT_SEARCH) private config: MatSelectSearchConfig
   ) {
-    this.config = { ...defaultConfig, ...config };
   }
 
   ngOnInit(): void {
@@ -117,7 +125,7 @@ export class MatSelectSearchComponent implements OnInit, OnChanges {
   }
 
   private showAllOptions() {
-    this.select.options.forEach(opt => {
+    this.select.options?.forEach(opt => {
       const el = opt._getHostElement();
       if (el) {
         el.style.display = 'flex';

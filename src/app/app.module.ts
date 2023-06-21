@@ -8,23 +8,29 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
-import { MatSelectSearchComponent } from "./mat-select-search/mat-select-search.component";
+import { MAT_SELECT_SEARCH, MatSelectSearchComponent } from "./mat-select-search/mat-select-search.component";
 
 @NgModule({
-    declarations: [
-        AppComponent,
-    ],
-    providers: [],
-    bootstrap: [AppComponent],
-    imports: [
-        BrowserModule,
-        CommonModule,
-        BrowserAnimationsModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        MatInputModule,
-        MatSelectSearchComponent,
-        MatButtonModule
-    ]
+  declarations: [
+    AppComponent,
+  ],
+  providers: [{
+    provide: MAT_SELECT_SEARCH,
+    useValue: {
+      placeholder: 'Start typing...',
+      sticky: false
+    }
+  }],
+  bootstrap: [AppComponent],
+  imports: [
+    BrowserModule,
+    CommonModule,
+    BrowserAnimationsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+    MatSelectSearchComponent,
+    MatButtonModule
+  ]
 })
-export class AppModule {}
+export class AppModule { }
