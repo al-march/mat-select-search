@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Host, Inject, InjectionToken, Input, OnChanges, OnInit, Optional, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Host, Inject, InjectionToken, Input, OnChanges, OnInit, Optional, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -49,7 +49,7 @@ function setConfigValue(config: MatSelectSearchConfig, key: keyof MatSelectSearc
   styleUrls: ['./mat-select-search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MatSelectSearchComponent implements OnInit, OnChanges {
+export class MatSelectSearchComponent implements OnInit, OnChanges, AfterViewInit {
 
   @ViewChild('input')
   input?: ElementRef<HTMLInputElement>;
@@ -80,25 +80,28 @@ export class MatSelectSearchComponent implements OnInit, OnChanges {
     this.onFilterChange();
     this.onSelectOpened();
     this.onSelected();
-
-    setTimeout(() => {
-      this.select._keyManager.skipPredicate((option) => {
-        console.log(option);
-
-        return !this.isOptionActive(option);
-      })
-      this.select._keyManager.change.subscribe(() => {
-        const activeOption = this.select._keyManager.activeItem;
-        if (activeOption instanceof MatOption) {
-          const el = activeOption._getHostElement();
-          el.scrollIntoView({ block: 'end' })
-        }
-      })
-    })
   }
 
   ngOnChanges(): void {
     this.filterItems();
+  }
+
+  ngAfterViewInit(): void {
+    // Skip hidden options 
+    this.select._keyManager.skipPredicate((option) => {
+      return !this.isOptionActive(option);
+    })
+
+    // Scroll to focused option by the bottom
+    // This behavior needs because search input
+    // may be sticky
+    this.select._keyManager.change.subscribe(() => {
+      const activeOption = this.select._keyManager.activeItem;
+      if (activeOption instanceof MatOption) {
+        const el = activeOption._getHostElement();
+        el.scrollIntoView({ block: 'end', behavior: 'smooth' })
+      }
+    })
   }
 
   private onFilterChange() {
@@ -111,7 +114,6 @@ export class MatSelectSearchComponent implements OnInit, OnChanges {
         this.focusFirstOption();
         this.updateIsNothingFoundState();
         this.filterChange.emit(filter);
-        this.ref.detectChanges();
       });
   }
 
@@ -191,6 +193,7 @@ export class MatSelectSearchComponent implements OnInit, OnChanges {
 
   private updateIsNothingFoundState() {
     this.isNothingFound = this.checkIsNothingFound();
+    this.ref.markForCheck();
   }
 
   private checkIsNothingFound() {
