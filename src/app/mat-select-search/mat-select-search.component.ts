@@ -137,6 +137,9 @@ export class MatSelectSearchComponent implements OnInit, OnChanges {
     const first = this.select.options.find(opt => this.isOptionActive(opt));
     if (first instanceof MatOption) {
       first.select();
+      if (!this.select.multiple) {
+        this.select.close();
+      }
     }
   }
 

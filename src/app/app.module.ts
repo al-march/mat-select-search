@@ -18,7 +18,6 @@ import { MAT_SELECT_SEARCH, MatSelectSearchComponent } from "./mat-select-search
     provide: MAT_SELECT_SEARCH,
     useValue: {
       placeholder: 'Start typing...',
-      sticky: false
     }
   }],
   bootstrap: [AppComponent],

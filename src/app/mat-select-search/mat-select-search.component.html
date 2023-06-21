@@ -4,7 +4,14 @@
   appearance="outline"
 >
   <mat-label>{{ placeholder }}</mat-label>
-  <input #input matInput type="text" [formControl]="filter" />
+  <input
+    #input
+    matInput
+    type="text"
+    [formControl]="filter"
+    (keydown.enter)="$event.stopPropagation(); selectFirstOption()"
+    (keydown.space)="$event.stopPropagation();"
+  />
 
   <button
     *ngIf="!!filter.value"
