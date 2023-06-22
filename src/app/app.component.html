@@ -9,11 +9,11 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
-  
+
   <mat-form-field>
     <mat-label>Filtered items</mat-label>
     <mat-select multiple placeholder="Filtered items">
-      <mat-select-search placeholder="hahaha" />
+      <mat-select-search label="hahaha" />
 
       <mat-option *ngFor="let item of items" [value]="item">
         {{ item }}

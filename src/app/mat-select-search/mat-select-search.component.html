@@ -3,11 +3,12 @@
   [class.sticky]="sticky"
   appearance="outline"
 >
-  <mat-label>{{ placeholder }}</mat-label>
+  <mat-label *ngIf="label">{{ label }}</mat-label>
   <input
     #input
     matInput
     type="text"
+    [placeholder]="placeholder"
     (keydown.space)="refocus()"
     (keydown.enter)="refocus()"
     [formControl]="filter"

@@ -17,7 +17,8 @@ import { MAT_SELECT_SEARCH, MatSelectSearchComponent } from "./mat-select-search
   providers: [{
     provide: MAT_SELECT_SEARCH,
     useValue: {
-      placeholder: 'Start typing...',
+      label: '',
+      placeholder: 'type to search',
       notFoundLabel: 'not found'
     }
   }],

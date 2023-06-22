@@ -10,13 +10,15 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
 
 export type MatSelectSearchConfig = {
+  label?: string;
   placeholder?: string;
   notFoundLabel?: string;
   sticky?: boolean;
 }
 
 const defaultConfig: MatSelectSearchConfig = {
-  placeholder: 'Search',
+  label: 'Search',
+  placeholder: 'text to find',
   notFoundLabel: 'Nothing is found',
   sticky: true,
 }
@@ -55,10 +57,13 @@ export class MatSelectSearchComponent implements OnInit, OnChanges, AfterViewIni
   input?: ElementRef<HTMLInputElement>;
 
   @Input()
-  placeholder = setConfigValue(this.config, 'placeholder');
+  label = setConfigValue(this.config, 'label') as string;
 
   @Input()
-  notFoundLabel = setConfigValue(this.config, 'notFoundLabel');
+  placeholder = setConfigValue(this.config, 'placeholder') as string;
+
+  @Input()
+  notFoundLabel = setConfigValue(this.config, 'notFoundLabel') as string;
 
   @Input()
   sticky = setConfigValue(this.config, 'sticky');
