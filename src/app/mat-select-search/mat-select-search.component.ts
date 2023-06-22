@@ -128,7 +128,9 @@ export class MatSelectSearchComponent implements OnInit, OnChanges, AfterViewIni
   private onSelected() {
     this.select.valueChange
       .pipe(filter(() => !this.select.multiple))
-    // .subscribe(() => this.reset());
+      // If reset filter matSelect may change focused
+      // option in the last moment
+      // .subscribe(() => this.reset());
   }
 
   private filterItems(filter = this.filter.value) {
