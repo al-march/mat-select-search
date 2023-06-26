@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Host, Inject, InjectionToken, Input, OnChanges, OnInit, Optional, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Host, Inject, InjectionToken, Input, OnChanges, OnInit, Optional, Output, QueryList, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -27,8 +27,8 @@ export const MAT_SELECT_SEARCH = new InjectionToken<MatSelectSearchConfig>(
   'mat-select-search-token'
 );
 
-function setConfigValue(config: MatSelectSearchConfig, key: keyof MatSelectSearchConfig) {
-  if (key in config) {
+function setConfigValue(config: MatSelectSearchConfig = {}, key: keyof MatSelectSearchConfig) {
+  if (key in (config || {})) {
     return config[key];
   } else {
     return defaultConfig[key];
@@ -79,6 +79,9 @@ export class MatSelectSearchComponent implements OnInit, OnChanges, AfterViewIni
     @Optional() @Inject(MAT_SELECT_SEARCH) private config: MatSelectSearchConfig,
     private ref: ChangeDetectorRef
   ) {
+    if (!select) {
+      throw new Error('mat-select-search should be into mat-select component')
+    }
   }
 
   ngOnInit(): void {
@@ -92,7 +95,7 @@ export class MatSelectSearchComponent implements OnInit, OnChanges, AfterViewIni
   }
 
   ngAfterViewInit(): void {
-    // Skip hidden options 
+    // Skip hidden options
     this.select._keyManager.skipPredicate((option) => {
       return !this.isOptionActive(option);
     })
@@ -166,10 +169,7 @@ export class MatSelectSearchComponent implements OnInit, OnChanges, AfterViewIni
 
   private focusFirstOption() {
     const option = this.select.options.find((opt) => {
-      if (this.isOptionActive(opt)) {
-        return true;
-      }
-      return false;
+      return this.isOptionActive(opt);
     });
     if (option instanceof MatOption) {
       this.select._keyManager.setActiveItem(option);
